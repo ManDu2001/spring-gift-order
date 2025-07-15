@@ -14,6 +14,7 @@ import gift.security.JwtProvider;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -35,14 +36,14 @@ public class MemberServiceImpl implements MemberService {
     String email = memberLoginRequestDto.email();
     String password = memberLoginRequestDto.password();
 
-    if (memberRepository.searchMemberByEmail(email).isPresent()) {
+    if (memberRepository.findByEmail(email).isPresent()) {
       throw new EmailAlreadyRegisteredException("이미 가입된 이메일입니다.");
     }
 
     String encodedPassword = passwordEncoder.encode(password);
     Member member = new Member(email, encodedPassword, Role.USER);
-    MemberInfoResponseDto saved = memberRepository.saveMember(member);
-    String token = jwtProvider.generateToken(new Member(saved.id(), saved.email(), saved.password(), saved.role()));
+    Member saved = memberRepository.save(member);
+    String token = jwtProvider.generateToken(saved);
 
     return new MemberLoginResponseDto(token);
   }
@@ -53,7 +54,7 @@ public class MemberServiceImpl implements MemberService {
     String email = memberLoginRequestDto.email();
     String password = memberLoginRequestDto.password();
 
-    Member member = memberRepository.searchMemberByEmail(email)
+    Member member = memberRepository.findByEmail(email)
         .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 회원입니다."));
 
     if (!passwordEncoder.matches(password, member.getPassword())) {
@@ -66,7 +67,7 @@ public class MemberServiceImpl implements MemberService {
   }
 
   public MemberInfoResponseDto searchMemberById(Long id){
-    Optional<Member> optionalMember = memberRepository.searchMemberById(id);
+    Optional<Member> optionalMember = memberRepository.findById(id);
 
     Member member = optionalMember.orElseThrow(() ->
         new NoSuchElementException("해당 ID = " + id + " 의 회원이 존재하지 않습니다.")
@@ -76,26 +77,31 @@ public class MemberServiceImpl implements MemberService {
   }
 
   public List<MemberInfoResponseDto> searchAllMembers(){
-    return memberRepository.searchAllMembers();
+    return memberRepository.findAll()
+        .stream()
+        .map(MemberInfoResponseDto::new)
+        .collect(Collectors.toList());
   }
 
   public MemberInfoResponseDto updateMember(Long id, MemberLoginRequestDto memberLoginRequestDto){
     String email = memberLoginRequestDto.email();
     String password = memberLoginRequestDto.password();
 
-    if (memberRepository.searchMemberByEmail(email).isPresent()) {
+    Optional<Member> opMember = memberRepository.findByEmail(email);
+    if (opMember.isPresent()) {
       throw new EmailAlreadyRegisteredException("이미 가입된 이메일입니다.");
     }
+    Member member = opMember.get();
 
     String encodedPassword = passwordEncoder.encode(password);
-    Member updated = memberRepository.updateMember(id, email, encodedPassword, Role.USER);
-    String token = jwtProvider.generateToken(new Member(updated.getId(), updated.getEmail(), updated.getPassword(), updated.getRole()));
+    member.update(email, encodedPassword, Role.USER);
+    String token = jwtProvider.generateToken(member);
 
-    return new MemberInfoResponseDto(updated.getId(), updated.getEmail(), updated.getPassword(), updated.getRole());
+    return new MemberInfoResponseDto(member);
   }
 
   public void deleteMember(Long id){
     searchMemberById(id);
-    memberRepository.deleteMember(id);
+    memberRepository.deleteById(id);
   }
 }

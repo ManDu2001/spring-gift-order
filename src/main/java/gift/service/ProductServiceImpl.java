@@ -9,9 +9,13 @@ import gift.repository.ProductRepository;
 import gift.validation.ProductNameValidator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class ProductServiceImpl implements ProductService {
 
   private final ProductRepository productRepository;
@@ -24,22 +28,27 @@ public class ProductServiceImpl implements ProductService {
     ProductNameValidator.validate(productRequestDto.name(), false);
     Product product = new Product(productRequestDto.name(), productRequestDto.price(),
         productRequestDto.imageUrl());
-    return productRepository.createProduct(product);
+    Product saved = productRepository.save(product);
+    return new ProductResponseDto(saved);
   }
 
   public ProductResponseDto createAdminProduct(ProductAdminRequestDto productAdminRequestDto) {
     ProductNameValidator.validate(productAdminRequestDto.name(), productAdminRequestDto.kakaoConfirmed());
     Product product = new Product(productAdminRequestDto.name(), productAdminRequestDto.price(),
         productAdminRequestDto.imageUrl());
-    return productRepository.createProduct(product);
+    Product saved = productRepository.save(product);
+    return new ProductResponseDto(saved);
+
   }
 
   public List<ProductResponseDto> searchAllProducts() {
-    return productRepository.searchAllProducts();
+    return productRepository.findAll(Sort.by(Sort.Direction.ASC, "id")).stream()
+        .map(ProductResponseDto::new)
+        .collect(Collectors.toList());
   }
 
   public ProductResponseDto searchProductById(Long id) {
-    Optional<Product> optionalProduct = productRepository.searchProductById(id);
+    Optional<Product> optionalProduct = productRepository.findById(id);
 
     Product product = optionalProduct.orElseThrow(() ->
         new ProductNotFoundException(id)
@@ -50,32 +59,27 @@ public class ProductServiceImpl implements ProductService {
 
   public ProductResponseDto updateProduct(Long id, ProductRequestDto productRequestDto) {
     ProductNameValidator.validate(productRequestDto.name(), false);
-    searchProductById(id);
-    Product updated = productRepository.updateProduct(
-        id,
-        productRequestDto.name(),
-        productRequestDto.price(),
-        productRequestDto.imageUrl()
-    );
+    Product product = productRepository.findById(id)
+        .orElseThrow(() -> new ProductNotFoundException(id));
 
-    return new ProductResponseDto(updated);
+    product.update(productRequestDto.name(), productRequestDto.price(), productRequestDto.imageUrl());
+
+    return new ProductResponseDto(product);
   }
 
   public ProductResponseDto updateAdminProduct(Long id, ProductAdminRequestDto productAdminRequestDto) {
     ProductNameValidator.validate(productAdminRequestDto.name(), productAdminRequestDto.kakaoConfirmed());
-    searchProductById(id);
-    Product updated = productRepository.updateProduct(
-        id,
-        productAdminRequestDto.name(),
-        productAdminRequestDto.price(),
-        productAdminRequestDto.imageUrl()
-    );
+    Product product = productRepository.findById(id)
+        .orElseThrow(() -> new ProductNotFoundException(id));
 
-    return new ProductResponseDto(updated);
+    product.update(productAdminRequestDto.name(), productAdminRequestDto.price(), productAdminRequestDto.imageUrl());
+
+    return new ProductResponseDto(product);
   }
 
   public void deleteProduct(Long id) {
-    searchProductById(id);
-    productRepository.deleteProduct(id);
+    Product product = productRepository.findById(id)
+        .orElseThrow(() -> new ProductNotFoundException(id));
+    productRepository.delete(product);
   }
 }

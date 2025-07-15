@@ -1,21 +1,20 @@
 package gift.repository;
 
+import gift.domain.Member;
+import gift.domain.Product;
 import gift.domain.WishList;
-import gift.dto.WishListResponseDto;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface WishListRepository {
+public interface WishListRepository extends JpaRepository<WishList, Long> {
 
-  WishListResponseDto saveWishList(WishList wishList);
+  Optional<WishList> findByMemberAndProduct(Member member, Product product);
 
-  Optional<WishListResponseDto> searchByMemberAndProduct(Long memberId, Long productId);
+  List<WishList> findAllByMember(Member member, Sort sort);
 
-  List<WishListResponseDto> searchAllByMemberId(Long memberId);
+  void deleteByMemberAndProduct(Member member, Product product);
 
-  WishListResponseDto updateQuantity(Long memberId, Long productId, int quantity);
-
-  void deleteByMemberAndProduct(Long memberId, Long productId);
-
-  void deleteAllByMemberId(Long memberId);
+  void deleteAllByMember(Member member);
 }

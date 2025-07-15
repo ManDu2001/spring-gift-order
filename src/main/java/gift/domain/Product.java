@@ -1,13 +1,32 @@
 package gift.domain;
 
+import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = "product")
 public class Product {
 
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+
+  @Column(nullable = false, length = 15)
   private String name;
+
+  @Column(nullable = false)
   private Integer price;
+
+  @Column(name = "image_url", nullable = false)
   private String imageUrl;
 
-  public Product(Long id, String name, Integer price, String imageUrl) {
+  @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<WishList> wishLists = new ArrayList<>();
+
+  protected Product() {}
+
+  public Product(Long id, String name, Integer price, String imageUrl){
     this.id = id;
     this.name = name;
     this.price = price;
@@ -26,19 +45,8 @@ public class Product {
     this.imageUrl = imageUrl;
   }
 
-  public Long getId() {
-    return this.id;
-  }
-
-  public String getName() {
-    return this.name;
-  }
-
-  public Integer getPrice() {
-    return this.price;
-  }
-
-  public String getImageUrl() {
-    return this.imageUrl;
-  }
+  public Long getId() { return id; }
+  public String getName() { return name; }
+  public Integer getPrice() { return price; }
+  public String getImageUrl() { return imageUrl; }
 }
