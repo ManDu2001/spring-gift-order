@@ -10,6 +10,8 @@ import gift.validation.ProductNameValidator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,10 +43,9 @@ public class ProductServiceImpl implements ProductService {
 
   }
 
-  public List<ProductResponseDto> searchAllProducts() {
-    return productRepository.findAll(Sort.by(Sort.Direction.ASC, "id")).stream()
-        .map(ProductResponseDto::new)
-        .collect(Collectors.toList());
+  public Page<ProductResponseDto> searchAllProducts(Pageable pageable) {
+    return productRepository.findAll(pageable)
+        .map(ProductResponseDto::new);
   }
 
   public ProductResponseDto searchProductById(Long id) {

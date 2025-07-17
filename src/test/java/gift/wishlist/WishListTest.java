@@ -126,9 +126,10 @@ public class WishListTest extends TestConfig {
 
     String responseBody = result.getResponse().getContentAsString();
     JsonNode root = objectMapper.readTree(responseBody);
+    JsonNode contentArray = root.get("content");
 
     boolean found = false;
-    for (JsonNode node : root) {
+    for (JsonNode node : contentArray) {
       if (node.get("productId").asLong() == productId) {
         int quantity = node.get("quantity").asInt();
         assertEquals(30, quantity, "상품 수량이 누적되어 30개여야 합니다.");
@@ -168,9 +169,10 @@ public class WishListTest extends TestConfig {
 
     String responseBody = result.getResponse().getContentAsString();
     JsonNode root = objectMapper.readTree(responseBody);
+    JsonNode contentArray = root.get("content");
 
     boolean found = false;
-    for (JsonNode node : root) {
+    for (JsonNode node : contentArray) {
       if (node.get("productId").asLong() == productId) {
         int quantity = node.get("quantity").asInt();
         assertEquals(777, quantity, "상품 수량이 777로 반영되어야 합니다.");
@@ -208,9 +210,10 @@ public class WishListTest extends TestConfig {
 
     String responseBody = result.getResponse().getContentAsString();
     JsonNode root = objectMapper.readTree(responseBody);
+    JsonNode contentArray = root.get("content");
 
     boolean found = false;
-    for (JsonNode node : root) {
+    for (JsonNode node : contentArray) {
       if (node.get("productId").asLong() == productId) {
         found = true;
         break;

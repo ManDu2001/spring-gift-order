@@ -4,6 +4,8 @@ import gift.dto.ProductAdminRequestDto;
 import gift.dto.ProductRequestDto;
 import gift.dto.ProductResponseDto;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface ProductService {
 
@@ -11,7 +13,7 @@ public interface ProductService {
 
   ProductResponseDto createAdminProduct(ProductAdminRequestDto productAdminRequestDto);
 
-  List<ProductResponseDto> searchAllProducts();
+  Page<ProductResponseDto> searchAllProducts(Pageable pageable);
 
   ProductResponseDto searchProductById(Long id);
 

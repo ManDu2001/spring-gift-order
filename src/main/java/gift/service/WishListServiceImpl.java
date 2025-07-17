@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,15 +70,15 @@ public class WishListServiceImpl implements WishListService {
   }
 
   @Override
-  public List<WishListResponseDto> getWishList(Long memberId) {
+  public Page<WishListResponseDto> getWishList(Long memberId, Pageable pageable) {
     Optional<Member> opMember = memberRepository.findById(memberId);
 
     Member member = opMember.orElseThrow(() ->
         new NoSuchElementException("해당 ID = " + memberId + " 의 회원이 존재하지 않습니다.")
     );
-    return wishListRepository.findAllByMember(member, Sort.by(Sort.Direction.ASC, "product.id")).stream()
-        .map(WishListResponseDto::new)
-        .collect(Collectors.toList());
+
+    return wishListRepository.findAllByMember(member, pageable)
+        .map(WishListResponseDto::new);
   }
 
   @Override
