@@ -1,7 +1,24 @@
 package gift.exception;
 
-public class EmailAlreadyRegisteredException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class EmailAlreadyRegisteredException extends CustomException {
   public EmailAlreadyRegisteredException(String message) {
     super(message);
+  }
+
+  @Override
+  public HttpStatus getStatus() {
+    return HttpStatus.CONFLICT;
+  }
+
+  @Override
+  public String getTitle() {
+    return "Email already registered";
+  }
+
+  @Override
+  public String getType() {
+    return "localhost:8080/api/members/email-already-registered";
   }
 }

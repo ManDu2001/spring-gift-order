@@ -1,0 +1,50 @@
+package gift.service;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import gift.config.KakaoProperties;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientResponseException;
+
+@Service
+public class KakaoOAuthServiceImpl implements KakaoOAuthService {
+
+  private final KakaoProperties kakaoProperties;
+  private final RestClient restClient;
+
+  public KakaoOAuthServiceImpl(KakaoProperties kakaoProperties) {
+    this.kakaoProperties = kakaoProperties;
+    this.restClient = RestClient.builder()
+        .baseUrl("https://kauth.kakao.com")
+        .build();
+  }
+
+  @Override
+  public String getAccessToken(String authorizationCode) {
+    MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+    body.add("grant_type", "authorization_code");
+    body.add("client_id", kakaoProperties.getClientId());
+    body.add("redirect_uri", kakaoProperties.getRedirectUri());
+    body.add("code", authorizationCode);
+
+    try {
+      JsonNode responseBody = restClient.post()
+          .uri("/oauth/token")
+          .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+          .body(body)
+          .retrieve()
+          .body(JsonNode.class);
+
+      if (responseBody != null && responseBody.has("access_token")) {
+        return responseBody.get("access_token").asText();
+      } else {
+        throw new IllegalStateException("카카오에서 access_token을 받지 못했습니다.");
+      }
+    } catch (RestClientResponseException e) {
+      throw new IllegalStateException("카카오 토큰 요청 실패: " + e.getResponseBodyAsString());
+    }
+  }
+}
