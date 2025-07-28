@@ -9,3 +9,10 @@
 -[x] [Config] application-local.properties에 있는 설정값 필드를 자바 객체로 매핑시켜주는 KakaoProperties 클래스 생성
 -[x] [Service] 인가 코드를 이용해 access token을 얻어 오는 역할 수행하는 KakaoOAuthService 인터페이스 와 구현체 KakaoOAuthServiceImpl 작성
 -[x] [Controller] 카카오 로그인 후 카카오 서버가 localhost:8080으로 리디렉션 할 때 포함된 code를 이용해 service layer 호출하는 역할 수행하는 KakaoOAuthController 구현
+
+### 1단계 피드백 반영 목록
+- [x] [Exception] CustomException을 상속받는 예외들의 getType 함수에서 "localhost:8080" 으로 하드 코딩된 URI를 제거 (아직, 해당 URI에 문서가 존재하지 않기 때문에 큰 문제는 없다고 생각됩니다.)
+- [x] [properties] 기존 properties 확장자로 관리되는 설정 파일을 yaml 확장자로 변경
+- [x] [Dto] KakaoOAuthResponseDto 추가
+- [x] [Controller] KakaoOAuthController의 receiveCode의 반환 타입 String -> KakaoOAuthResponseDto 로 수정
+- [x] [Service] KakaoOAuthServiceImpl의 getAccessToken 함수에서 기존 JSON Node 의 각 필드 접근하는 방식 대신, 바로 KakaoOAuthResponseDto 매핑되도록 변경하여 코드 간소화
