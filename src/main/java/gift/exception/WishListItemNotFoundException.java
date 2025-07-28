@@ -19,6 +19,6 @@ public class WishListItemNotFoundException extends CustomException {
 
   @Override
   public String getType() {
-    return "localhost:8080/api/wishlist/item-not-found";
+    return "/api/wishlist/item-not-found";
   }
 }

@@ -19,6 +19,6 @@ public class InvalidRequestException extends CustomException {
 
   @Override
   public String getType() {
-    return "localhost:8080/api/products/invalid-request";
+    return "/api/products/invalid-request";
   }
 }

@@ -19,6 +19,6 @@ public class EmailAlreadyRegisteredException extends CustomException {
 
   @Override
   public String getType() {
-    return "localhost:8080/api/members/email-already-registered";
+    return "/api/members/email-already-registered";
   }
 }

@@ -19,6 +19,6 @@ public class OptionNotFoundException extends CustomException {
 
   @Override
   public String getType() {
-    return "localhost:8080/api/products/options-not-found";
+    return "/api/products/options-not-found";
   }
 }

@@ -20,6 +20,6 @@ public class InvalidOptionQuantityException extends CustomException {
 
   @Override
   public String getType() {
-    return "localhost:8080/api/options/invalid-quantity";
+    return "/api/options/invalid-quantity";
   }
 }

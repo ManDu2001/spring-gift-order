@@ -19,6 +19,6 @@ public class MemberNotFoundException extends CustomException {
 
   @Override
   public String getType() {
-    return "localhost:8080/api/members/member-not-found";
+    return "/api/members/member-not-found";
   }
 }
