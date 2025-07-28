@@ -1,5 +1,7 @@
 package gift.service;
 
+import gift.dto.KakaoOAuthResponseDto;
+
 public interface KakaoOAuthService {
-  String getAccessToken(String authorizationCode);
+  KakaoOAuthResponseDto getAccessToken(String authorizationCode);
 }

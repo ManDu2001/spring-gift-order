@@ -2,6 +2,7 @@ package gift.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import gift.config.KakaoProperties;
+import gift.dto.KakaoOAuthResponseDto;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -23,7 +24,7 @@ public class KakaoOAuthServiceImpl implements KakaoOAuthService {
   }
 
   @Override
-  public String getAccessToken(String authorizationCode) {
+  public KakaoOAuthResponseDto getAccessToken(String authorizationCode) {
     MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
     body.add("grant_type", "authorization_code");
     body.add("client_id", kakaoProperties.getClientId());
@@ -31,18 +32,19 @@ public class KakaoOAuthServiceImpl implements KakaoOAuthService {
     body.add("code", authorizationCode);
 
     try {
-      JsonNode responseBody = restClient.post()
+      KakaoOAuthResponseDto response = restClient.post()
           .uri("/oauth/token")
           .contentType(MediaType.APPLICATION_FORM_URLENCODED)
           .body(body)
           .retrieve()
-          .body(JsonNode.class);
+          .body(KakaoOAuthResponseDto.class);
 
-      if (responseBody != null && responseBody.has("access_token")) {
-        return responseBody.get("access_token").asText();
-      } else {
+      if (response == null || response.accessToken() == null) {
         throw new IllegalStateException("카카오에서 access_token을 받지 못했습니다.");
       }
+
+      return response;
+
     } catch (RestClientResponseException e) {
       throw new IllegalStateException("카카오 토큰 요청 실패: " + e.getResponseBodyAsString());
     }
