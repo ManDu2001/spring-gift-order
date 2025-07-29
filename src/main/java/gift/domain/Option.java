@@ -38,4 +38,8 @@ public class Option {
   public void updateQuantity(Integer quantity) {
     this.quantity = quantity;
   }
+
+  public void decreaseQuantity(int quantity) {
+    this.quantity -= quantity;
+  }
 }
