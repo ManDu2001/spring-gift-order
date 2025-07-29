@@ -24,6 +24,9 @@ public class Member {
   @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<WishList> wishLists = new ArrayList<>();
 
+  @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Order> orders = new ArrayList<>();
+
   protected Member() {}
 
   public Member(Long id, String email, String password, Role role) {
@@ -44,6 +47,8 @@ public class Member {
   public String getPassword() { return password; }
   public Role getRole() { return role; }
   public List<WishList> getWishLists() { return wishLists; }
+
+  public List<Order> getOrders() { return orders; }
 
   public void update(String email, String password, Role role) {
     this.email = email;

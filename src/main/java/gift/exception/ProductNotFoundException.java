@@ -19,6 +19,6 @@ public class ProductNotFoundException extends CustomException {
 
   @Override
   public String getType() {
-    return "localhost:8080/api/products/product-not-found";
+    return "/api/products/product-not-found";
   }
 }

@@ -19,6 +19,6 @@ public class DuplicateOptionNameException extends CustomException {
 
   @Override
   public String getType() {
-    return "localhost:8080/api/products/duplicate-option-name";
+    return "/api/products/duplicate-option-name";
   }
 }

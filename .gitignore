@@ -40,4 +40,4 @@ out/
 .DS_Store
 
 # application-local 설정 제외
-src/main/resources/application-local.properties
+src/main/resources/application-local.yaml

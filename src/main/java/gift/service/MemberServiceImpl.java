@@ -2,6 +2,8 @@ package gift.service;
 
 import gift.domain.Member;
 import gift.domain.Role;
+import gift.domain.UserKakaoToken;
+import gift.dto.KakaoOAuthResponseDto;
 import gift.dto.MemberInfoResponseDto;
 import gift.dto.MemberLoginRequestDto;
 import gift.dto.MemberLoginResponseDto;
@@ -9,8 +11,10 @@ import gift.exception.EmailAlreadyRegisteredException;
 import gift.exception.MemberNotFoundException;
 import gift.exception.PasswordMismatchException;
 import gift.repository.MemberRepository;
+import gift.repository.UserKakaoTokenRepository;
 import gift.security.BcryptPasswordEncoder;
 import gift.security.JwtProvider;
+import java.time.Instant;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -24,11 +28,13 @@ public class MemberServiceImpl implements MemberService {
   private final MemberRepository memberRepository;
   private final JwtProvider jwtProvider;
   private final BcryptPasswordEncoder passwordEncoder;
+  private final UserKakaoTokenRepository userKakaoTokenRepository;
 
-  public MemberServiceImpl(MemberRepository memberRepository, JwtProvider jwtProvider, BcryptPasswordEncoder passwordEncoder) {
+  public MemberServiceImpl(MemberRepository memberRepository, JwtProvider jwtProvider, BcryptPasswordEncoder passwordEncoder, UserKakaoTokenRepository userKakaoTokenRepository) {
     this.memberRepository = memberRepository;
     this.jwtProvider = jwtProvider;
     this.passwordEncoder = passwordEncoder;
+    this.userKakaoTokenRepository = userKakaoTokenRepository;
   }
 
   @Override
@@ -86,7 +92,7 @@ public class MemberServiceImpl implements MemberService {
         .collect(Collectors.toList());
   }
 
-  @Transactional(readOnly = true)
+  @Transactional
   public MemberInfoResponseDto updateMember(Long id, MemberLoginRequestDto memberLoginRequestDto){
     String email = memberLoginRequestDto.email();
     String password = memberLoginRequestDto.password();
@@ -104,9 +110,47 @@ public class MemberServiceImpl implements MemberService {
     return new MemberInfoResponseDto(member);
   }
 
-  @Transactional(readOnly = true)
+  @Transactional
   public void deleteMember(Long id){
     searchMemberById(id);
     memberRepository.deleteById(id);
+  }
+
+  @Transactional
+  public Member registerOrLoginByKakao(String email, KakaoOAuthResponseDto tokenDto) {
+    Optional<Member> optionalMember = memberRepository.findByEmail(email);
+
+    Member member;
+    if (optionalMember.isPresent()) {
+      member = optionalMember.get();
+    } else {
+      String encodedPassword = passwordEncoder.encode("123456");
+      member = new Member(email, encodedPassword, Role.USER);
+      member = memberRepository.save(member);
+    }
+
+    Instant now = Instant.now();
+    
+    UserKakaoToken kakaoToken = userKakaoTokenRepository.findById(member.getId())
+        .map(existingToken -> {
+          existingToken.updateToken(
+              tokenDto.accessToken(),
+              tokenDto.refreshToken(),
+              now.plusSeconds(tokenDto.expiresIn()),
+              now.plusSeconds(tokenDto.refreshTokenExpiresIn())
+          );
+          return existingToken;
+        })
+        .orElse(new UserKakaoToken(
+            member,
+            tokenDto.accessToken(),
+            tokenDto.refreshToken(),
+            now.plusSeconds(tokenDto.expiresIn()),
+            now.plusSeconds(tokenDto.refreshTokenExpiresIn())
+        ));
+
+    userKakaoTokenRepository.save(kakaoToken);
+
+    return member;
   }
 }

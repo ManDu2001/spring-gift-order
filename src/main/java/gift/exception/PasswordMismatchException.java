@@ -19,6 +19,6 @@ public class PasswordMismatchException extends CustomException {
 
   @Override
   public String getType() {
-    return "localhost:8080/api/members/password-mismatch";
+    return "/api/members/password-mismatch";
   }
 }
