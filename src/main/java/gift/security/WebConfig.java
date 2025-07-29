@@ -10,12 +10,17 @@ public class WebConfig implements WebMvcConfigurer {
 
   private final LoginMemberIdArgumentResolver loginMemberIdArgumentResolver;
 
-  public WebConfig(LoginMemberIdArgumentResolver loginMemberIdArgumentResolver) {
+  private final LoginKakaoMemberArgumentResolver loginKakaoMemberArgumentResolver;
+
+  public WebConfig(LoginMemberIdArgumentResolver loginMemberIdArgumentResolver
+  , LoginKakaoMemberArgumentResolver loginKakaoMemberArgumentResolver) {
     this.loginMemberIdArgumentResolver = loginMemberIdArgumentResolver;
+    this.loginKakaoMemberArgumentResolver = loginKakaoMemberArgumentResolver;
   }
 
   @Override
   public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
     resolvers.add(loginMemberIdArgumentResolver);
+    resolvers.add(loginKakaoMemberArgumentResolver);
   }
 }
