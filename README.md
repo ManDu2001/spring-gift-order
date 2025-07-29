@@ -19,7 +19,7 @@
 
 ### 2단계 기능 구현 사항 목록
 - [x] [README.md] 2단계 요구사항에 따른 작업 목록 작성
-- [x] [resources/schema.sql] orders 에 대한 table 정의문 추가 
+- [x] [resources/schema.sql] orders 에 대한 table 정의문 추가 (+ user_kakao_token table 정의문 추가) 
 - [x] [Domain] 주문(Order)에 대한 정보를 담는 Order entity 생성
 - [x] [Domain] 각 유저에 대한 access, refresh 토큰과 만료일을 필드로 갖는 UserKakaoToken entity 생성
 - [x] [Domain] 기존 MemberEntity에 Order와의 연관 관계 설정
