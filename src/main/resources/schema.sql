@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS orders;
+DROP TABLE IF EXISTS user_kakao_token;
 DROP TABLE IF EXISTS product_option;
 DROP TABLE IF EXISTS wish_list;
 DROP TABLE IF EXISTS product;
@@ -33,4 +35,23 @@ CREATE TABLE product_option (
   quantity INTEGER NOT NULL,
   product_id BIGINT NOT NULL,
   CONSTRAINT fk_option_product FOREIGN KEY (product_id) REFERENCES product(id)
+);
+
+CREATE TABLE user_kakao_token (
+  user_id BIGINT PRIMARY KEY,
+  access_token VARCHAR(255) NOT NULL,
+  refresh_token VARCHAR(255) NOT NULL,
+  access_token_expires_at TIMESTAMP,
+  refresh_token_expires_at TIMESTAMP,
+  CONSTRAINT fk_user_kakao_token_member FOREIGN KEY (user_id) REFERENCES members(id)
+);
+
+CREATE TABLE orders (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  option_id BIGINT NOT NULL,
+  quantity INT NOT NULL,
+  message VARCHAR(255),
+  order_date_time TIMESTAMP NOT NULL,
+  member_id BIGINT NOT NULL,
+  CONSTRAINT fk_orders_member FOREIGN KEY (member_id) REFERENCES members(id)
 );
