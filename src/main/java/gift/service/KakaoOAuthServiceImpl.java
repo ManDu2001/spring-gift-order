@@ -21,8 +21,7 @@ import org.springframework.web.client.RestClientResponseException;
 @Service
 public class KakaoOAuthServiceImpl implements KakaoOAuthService {
 
-  private final KakaoProperties kakaoProperties;
-  private final RestClient restClient;
+  private final KakaoApiClientService kakaoApiClientService;
 
   private final MemberService memberService;
 
@@ -30,11 +29,8 @@ public class KakaoOAuthServiceImpl implements KakaoOAuthService {
 
   private final UserKakaoTokenRepository userKakaoTokenRepository;
 
-  public KakaoOAuthServiceImpl(KakaoProperties kakaoProperties, MemberService memberService, JwtProvider jwtProvider, UserKakaoTokenRepository userKakaoTokenRepository) {
-    this.kakaoProperties = kakaoProperties;
-    this.restClient = RestClient.builder()
-        .baseUrl("https://kauth.kakao.com")
-        .build();
+  public KakaoOAuthServiceImpl(KakaoApiClientService kakaoApiClientService, MemberService memberService, JwtProvider jwtProvider, UserKakaoTokenRepository userKakaoTokenRepository) {
+    this.kakaoApiClientService = kakaoApiClientService;
     this.memberService = memberService;
     this.jwtProvider = jwtProvider;
     this.userKakaoTokenRepository = userKakaoTokenRepository;
@@ -42,41 +38,11 @@ public class KakaoOAuthServiceImpl implements KakaoOAuthService {
 
   @Override
   public KakaoOAuthResponseDto getAccessToken(String authorizationCode) {
-    MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-    body.add("grant_type", "authorization_code");
-    body.add("client_id", kakaoProperties.getClientId());
-    body.add("redirect_uri", kakaoProperties.getRedirectUri());
-    body.add("code", authorizationCode);
-
-    try {
-      KakaoOAuthResponseDto response = restClient.post()
-          .uri("/oauth/token")
-          .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-          .body(body)
-          .retrieve()
-          .body(KakaoOAuthResponseDto.class);
-
-      if (response == null || response.accessToken() == null) {
-        throw new IllegalStateException("카카오에서 access_token을 받지 못했습니다.");
-      }
-
-      return response;
-
-    } catch (RestClientResponseException e) {
-      throw new IllegalStateException("카카오 토큰 요청 실패: " + e.getResponseBodyAsString());
-    }
+    return kakaoApiClientService.getAccessToken(authorizationCode);
   }
   @Override
   public KakaoUserInfoResponseDto getUserInfo(String accessToken) {
-    try {
-      return restClient.get()
-          .uri("https://kapi.kakao.com/v2/user/me")
-          .header("Authorization", "Bearer " + accessToken)
-          .retrieve()
-          .body(KakaoUserInfoResponseDto.class);
-    } catch (RestClientResponseException e) {
-      throw new IllegalStateException("카카오 사용자 정보 요청 실패: " + e.getResponseBodyAsString());
-    }
+    return kakaoApiClientService.getUserInfo(accessToken);
   }
 
   public LoginResponseDto registerOrLogin(String authorizationCode) {
