@@ -50,3 +50,7 @@
 - [x] [Service] MemberServiceImpl에서 토큰 만료시간의 반환 단위를 "초"로 명시하는 주석 추가
 - [x] [Service] OrderServiceImpl에서 기존 코드 컨벤션 맞추기 위해 공백 추가
 - [x] [Service] KakaoApiClientService 인터페이스, 구현체 생성(기존 KakaoOAuthService의 관심사에는 부합하지 않아 별도로 분리), 이에 따라 KakaoOAuthServiceImpl에서 KakaoApiClientService 주입받도록 수정
+
+### 3단계 기능 구현 사항 목록
+- [x] deploy.sh 작성
+- [x] WebConfig에 CORS 관련 설정 추가
