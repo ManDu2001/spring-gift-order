@@ -12,13 +12,13 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
 
 @Service
-public class KakaoApiClientServiceImpl implements KakaoApiClientService {
+public class KakaoApiClientImpl implements KakaoApiClient {
 
   private final KakaoProperties kakaoProperties;
   private final RestClient oauthClient;
   private final RestClient apiClient;
 
-  public KakaoApiClientServiceImpl(KakaoProperties kakaoProperties,
+  public KakaoApiClientImpl(KakaoProperties kakaoProperties,
       @Qualifier("kakaoOauthClient") RestClient oauthClient,
       @Qualifier("kakaoApiClient") RestClient apiClient) {
     this.kakaoProperties = kakaoProperties;

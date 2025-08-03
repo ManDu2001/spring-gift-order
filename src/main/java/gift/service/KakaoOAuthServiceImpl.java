@@ -1,7 +1,6 @@
 package gift.service;
 
 
-import gift.config.KakaoProperties;
 import gift.domain.Member;
 import gift.domain.UserKakaoToken;
 import gift.dto.KakaoOAuthResponseDto;
@@ -10,18 +9,13 @@ import gift.dto.LoginResponseDto;
 import gift.repository.UserKakaoTokenRepository;
 import gift.security.JwtProvider;
 import java.time.Instant;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestClientResponseException;
 
 @Service
 public class KakaoOAuthServiceImpl implements KakaoOAuthService {
 
-  private final KakaoApiClientService kakaoApiClientService;
+  private final KakaoApiClient kakaoApiClient;
 
   private final MemberService memberService;
 
@@ -29,8 +23,8 @@ public class KakaoOAuthServiceImpl implements KakaoOAuthService {
 
   private final UserKakaoTokenRepository userKakaoTokenRepository;
 
-  public KakaoOAuthServiceImpl(KakaoApiClientService kakaoApiClientService, MemberService memberService, JwtProvider jwtProvider, UserKakaoTokenRepository userKakaoTokenRepository) {
-    this.kakaoApiClientService = kakaoApiClientService;
+  public KakaoOAuthServiceImpl(KakaoApiClient kakaoApiClient, MemberService memberService, JwtProvider jwtProvider, UserKakaoTokenRepository userKakaoTokenRepository) {
+    this.kakaoApiClient = kakaoApiClient;
     this.memberService = memberService;
     this.jwtProvider = jwtProvider;
     this.userKakaoTokenRepository = userKakaoTokenRepository;
@@ -38,11 +32,11 @@ public class KakaoOAuthServiceImpl implements KakaoOAuthService {
 
   @Override
   public KakaoOAuthResponseDto getAccessToken(String authorizationCode) {
-    return kakaoApiClientService.getAccessToken(authorizationCode);
+    return kakaoApiClient.getAccessToken(authorizationCode);
   }
   @Override
   public KakaoUserInfoResponseDto getUserInfo(String accessToken) {
-    return kakaoApiClientService.getUserInfo(accessToken);
+    return kakaoApiClient.getUserInfo(accessToken);
   }
 
   public LoginResponseDto registerOrLogin(String authorizationCode) {
