@@ -13,7 +13,7 @@ import org.springframework.http.HttpHeaders;
 @Component
 public class LoginKakaoMemberArgumentResolver implements HandlerMethodArgumentResolver {
 
-  private static final String BEARER = "Bearer";
+  private static final String BEARER = "Bearer ";
   private final KakaoOAuthService kakaoOAuthService;
 
   public LoginKakaoMemberArgumentResolver(KakaoOAuthService kakaoOAuthService) {
@@ -38,7 +38,7 @@ public class LoginKakaoMemberArgumentResolver implements HandlerMethodArgumentRe
       throw new IllegalStateException("Authorization 헤더가 없거나 잘못되었습니다.");
     }
 
-    String accessToken = authHeader.substring(BEARER.length() + 1);
+    String accessToken = authHeader.substring(BEARER.length());
     return kakaoOAuthService.findMemberByAccessToken(accessToken);
   }
 }

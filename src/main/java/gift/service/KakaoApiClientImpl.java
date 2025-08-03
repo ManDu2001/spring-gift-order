@@ -3,6 +3,7 @@ package gift.service;
 import gift.config.KakaoProperties;
 import gift.dto.KakaoOAuthResponseDto;
 import gift.dto.KakaoUserInfoResponseDto;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -17,14 +18,12 @@ public class KakaoApiClientServiceImpl implements KakaoApiClientService {
   private final RestClient oauthClient;
   private final RestClient apiClient;
 
-  public KakaoApiClientServiceImpl(KakaoProperties kakaoProperties) {
+  public KakaoApiClientServiceImpl(KakaoProperties kakaoProperties,
+      @Qualifier("kakaoOauthClient") RestClient oauthClient,
+      @Qualifier("kakaoApiClient") RestClient apiClient) {
     this.kakaoProperties = kakaoProperties;
-    this.oauthClient = RestClient.builder()
-        .baseUrl("https://kauth.kakao.com")
-        .build();
-    this.apiClient = RestClient.builder()
-        .baseUrl("https://kapi.kakao.com")
-        .build();
+    this.oauthClient = oauthClient;
+    this.apiClient = apiClient;
   }
 
   @Override
