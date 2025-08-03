@@ -9,6 +9,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
+  private static final Long MAX_AGE_SECONDS = 1800L;
+
   private final LoginMemberIdArgumentResolver loginMemberIdArgumentResolver;
 
   private final LoginKakaoMemberArgumentResolver loginKakaoMemberArgumentResolver;
@@ -32,6 +34,6 @@ public class WebConfig implements WebMvcConfigurer {
         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
         .allowedHeaders("*")
         .allowCredentials(false)
-        .maxAge(1800);
+        .maxAge(MAX_AGE_SECONDS);
   }
 }
