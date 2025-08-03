@@ -54,3 +54,10 @@
 ### 3단계 기능 구현 사항 목록
 - [x] deploy.sh 작성
 - [x] WebConfig에 CORS 관련 설정 추가
+
+### 3단계 피드백 반영 목록
+- [x] [Security] LoginKakaoMemberArgumentResolver에서 BEARER의 상수값을 "Bearer" 에서 "Bearer " 으로 수정 및 이에 따른 변경 사항 추가
+- [x] [Security] WebConfig에서 maxAge 설정할 때 리터럴이 아닌 상수 값 사용토록 수정
+- [x] [Service] 기존 KakaoApiClientService와 KakaoApiClientServiceImpl의 이름에서 접미사 "Service" 삭제 / 이로 인한 KakaoOAuthServiceImpl 에서 사용되는 이름 변경
+- [x] [Config & Service] OAuth, API client 설정하는 KakaoClientConfig 추가 및 이에 따른 KakaoApiClientImpl 생성자 주입 코드 수정
+- [x] [Domain & Service] UserKakaoToken에서 토큰 만료에 대한 책임을 담당하는 isExpired 함수 추가 및 이에 따른 KakaoTokenServiceImpl 수정
