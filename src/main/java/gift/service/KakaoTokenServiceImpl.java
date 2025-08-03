@@ -21,7 +21,7 @@ public class KakaoTokenServiceImpl implements KakaoTokenService {
     UserKakaoToken token = userKakaoTokenRepository.findById(memberId)
         .orElseThrow(() -> new IllegalStateException("해당 사용자의 카카오 토큰이 존재하지 않습니다."));
 
-    if (token.getAccessTokenExpiresAt() != null && token.getAccessTokenExpiresAt().isBefore(Instant.now())) {
+    if (token.isExpired()) {
       throw new IllegalStateException("액세스 토큰이 만료되었습니다. 리프레시 필요.");
     }
 
